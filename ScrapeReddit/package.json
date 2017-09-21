@@ -1,0 +1,9 @@
+{
+    "name": "bobr-bot",
+    "description": "This is our BOBR BOT for scraping reddit",
+    "authors": "Adam Abonyi",
+    "version": "6.9.0",
+    "dependencies": {
+        "snoowrap":"1.14.2"
+    }
+}

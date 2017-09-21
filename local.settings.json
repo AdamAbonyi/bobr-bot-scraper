@@ -1,6 +1,10 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": ""
+    "AzureWebJobsStorage": "",
+    "ClientId":"Ri_89JP8_TzKVg",
+    "ClientSecret": "SK2EvaFZtF_bdNJGqL8bvSn8fNk",
+    "Username":"xenik",
+    "Password":"asdfg007"
   }
 }
