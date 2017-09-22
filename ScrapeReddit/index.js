@@ -11,16 +11,30 @@ module.exports = function (context, req) {
         password: process.env["Password"]
     });
 
-    var result = [];
-    var me = "";
-    var result = r.getMe().then(function(x) {
+    context.res = {
+        status: 400,
+        body: "Please pass a subreddit name on the query string or in the request body"
+    }; 
+
+    if (!(req.body && req.body.subreddit)) {
         context.res = {
-            
-                        // status: 200, /* Defaults to 200 */
-                        body: "Hello " + x + (req.query.name || req.body.name)
-                    };
+            status: 400,
+            body: "Please pass a subreddit name on the query string or in the request body"
+        };
+    }
+
+    r.getSubreddit('gifs').getHot().then((x) => {
+        if (!!x && x.length > 0 && (req.body && req.body.subreddit)) {
+            let first = x.find(x => !x.stickied && !x.pinned);
+            context.res = {
+                // status: 200, /* Defaults to 200 */
+                body: JSON.stringify(first.body || x[0])
+            };
+        }
         context.done();
     });
+
+
     //var result = r.getMe();
     // if (req.query.name || (req.body && req.body.name)) {
     //     context.res = {
@@ -36,5 +50,5 @@ module.exports = function (context, req) {
     //     };
     // }
     //context.done();
-   
+
 };
