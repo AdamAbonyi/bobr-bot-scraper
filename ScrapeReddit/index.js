@@ -14,6 +14,7 @@ module.exports = function (context, req) {
     context.res = {
         status: 400,
         body: "Please pass a subreddit name on the query string or in the request body"
+        
     }; 
 
 

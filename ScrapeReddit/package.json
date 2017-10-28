@@ -4,6 +4,6 @@
     "authors": "Adam Abonyi",
     "version": "6.9.0",
     "dependencies": {
-        "snoowrap":"1.14.2"
+        "snoowrap":"1.14.2" 
     }
 }
