@@ -14,7 +14,6 @@ module.exports = function (context, req) {
     context.res = {
         status: 400,
         body: "Please pass a subreddit name on the query string or in the request body"
-        
     }; 
 
 
@@ -27,6 +26,8 @@ module.exports = function (context, req) {
             status: 400,
             body: "Please pass a subreddit name on the query string or in the request body"
         };
+        context.done();
+        return;
     }
 
     function checkForEmbeded(item) {
