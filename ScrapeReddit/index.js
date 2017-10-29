@@ -1,8 +1,9 @@
 const snoowrap = require('snoowrap');
 
-module.exports = function (context, req) {
+module.exports = async function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
 
+    // Initialize Reddit API connector
     var r = new snoowrap({
         user_agent: "Azure Functions automatic downloader v0.1 (by /u/Xenik )",
         client_id: process.env["ClientId"],
@@ -11,12 +12,13 @@ module.exports = function (context, req) {
         password: process.env["Password"]
     });
 
+    // Default Error Message
     context.res = {
         status: 400,
         body: "Please pass a subreddit name on the query string or in the request body"
     }; 
 
-
+    // Check if subreddit is filled in
     var subreddit = null;
     if (!!req.body) subreddit = req.body.subreddit;
     if (!subreddit && !!req.query) subreddit = req.query.subreddit;
@@ -30,6 +32,7 @@ module.exports = function (context, req) {
         return;
     }
 
+    // Helper function 1
     function checkForEmbeded(item) {
         if (!!item["secure_media"]  && !!item["secure_media"]["oembed"] && !!item["secure_media"]["oembed"].html) {
             var str = item["secure_media"]["oembed"].html;
@@ -39,28 +42,28 @@ module.exports = function (context, req) {
 
             return src;
         }
-
         return null;
     }
 
+    // Helper function 2
     function checkForPicture(item) {
         if (!!item["preview"]  && !!item["preview"]["images"] && !!item["preview"]["images"][0] && !!item["preview"]["images"][0].source && !!item["preview"]["images"][0].source.url) {
             return item["preview"]["images"][0].source.url;
         }
-
         return null;
     }
 
-    r.getSubreddit(subreddit).getHot().then((x) => {
-        if (!!x && x.length > 0 && !!subreddit) {
-            let first = x.find(x => !x.stickied && !x.pinned && (!!checkForEmbeded(x) || checkForPicture(x)) );
-            let result = checkForEmbeded(first);
-            if (!result) result = checkForPicture(first);
-            context.res = {
-                // status: 200, /* Defaults to 200 */
-                body: JSON.stringify(result)
-            };
-        }
-        context.done();
-    });
+    // Retrieve data
+    var results = await r.getSubreddit(subreddit).getHot();
+
+    if (!!results && results.length > 0 && !!subreddit) {
+        let first = results.find(x => !x.stickied && !x.pinned && (!!checkForEmbeded(x) || checkForPicture(x)) );
+        let result = checkForEmbeded(first);
+        if (!result) result = checkForPicture(first);
+        context.res = {
+            // status: 200, /* Defaults to 200 */
+            body: JSON.stringify(result)
+        };
+    }
+    context.done();
 };
