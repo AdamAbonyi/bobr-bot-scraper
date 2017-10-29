@@ -28,7 +28,7 @@ module.exports = async function (context, req) {
             status: 400,
             body: "Please pass a subreddit name on the query string or in the request body"
         };
-        context.done();
+        //context.done();
         return;
     }
 
@@ -65,5 +65,5 @@ module.exports = async function (context, req) {
             body: JSON.stringify(result)
         };
     }
-    context.done();
+    //context.done();
 };
