@@ -57,9 +57,23 @@ module.exports = async function (context, req) {
     var results = await r.getSubreddit(subreddit).getHot();
 
     if (!!results && results.length > 0 && !!subreddit) {
-        let first = results.find(x => !x.stickied && !x.pinned && (!!checkForEmbeded(x) || checkForPicture(x)) );
-        let result = checkForEmbeded(first);
-        if (!result) result = checkForPicture(first);
+        let contentResults = results.filter(x => !x.stickied && !x.pinned && (!!checkForEmbeded(x) || checkForPicture(x)));
+        let resultLength = contentResults.length;
+
+        if (!resultLength) {
+            context.res = {
+                status: 400, /* Defaults to 200 */
+                body: "No image contant found"
+            };    
+        }
+
+        // Pick a random result
+        var randomIndex = Math.floor(Math.random() * (contentResults.length - 0 + 1)) + 0;
+        let item = contentResults[randomIndex];
+        
+        // Extract links to content
+        let result = checkForEmbeded(item);
+        if (!result) result = checkForPicture(item);
         context.res = {
             // status: 200, /* Defaults to 200 */
             body: JSON.stringify(result)
